@@ -1,33 +1,25 @@
-"""
-Модуль для подключения к PostgreSQL
-"""
-
 import psycopg2
-from psycopg2.extras import RealDictCursor
-from config import DB_CONFIG
+from config import load_config
 
-
-def get_connection():
-    """Создание подключения к базе данных"""
+def create_connection():
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
+        config = load_config()
+
+        conn = psycopg2.connect(
+            host=config['host'],
+            database=config['database'],
+            user=config['user'],
+            password=config['password'],
+            port=5432
+        )
+
+        print("Connected to PostgreSQL")
         return conn
-    except Exception as e:
-        print(f"Ошибка подключения: {e}")
+
+    except Exception as error:
+        print("Connection error:", error)
         return None
 
 
-def test_connection():
-    """Тестирование подключения"""
-    conn = get_connection()
-    if conn:
-        print(" Подключение успешно!")
-        conn.close()
-        return True
-    else:
-        print(" Ошибка подключения!")
-        return False
-
-
 if __name__ == "__main__":
-    test_connection()
+    create_connection()

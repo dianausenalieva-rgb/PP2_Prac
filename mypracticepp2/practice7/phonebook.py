@@ -39,7 +39,7 @@ def insert_contact(name, phone):
         conn.commit()
         print(f" Added: {name}")
     except Exception as e:
-        print("❌ Error:", e)
+        print(" Error:", e)
     finally:
         cur.close()
         conn.close()

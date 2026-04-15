@@ -1,23 +1,30 @@
-1. Поиск по паттерну
-CREATE OR REPLACE FUNCTION search_contacts(p text)
+--  Получить все контакты
+CREATE OR REPLACE FUNCTION get_all_contacts()
 RETURNS TABLE(id INT, first_name VARCHAR, phone VARCHAR) AS $$
 BEGIN
-    RETURN QUERY
-    SELECT pb.id, pb.first_name, pb.phone
-    FROM phonebook pb
-    WHERE pb.first_name ILIKE '%' || p || '%'
-       OR pb.phone ILIKE '%' || p || '%';
+    RETURN QUERY SELECT id, first_name, phone FROM phonebook ORDER BY id;
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. Пагинация
-CREATE OR REPLACE FUNCTION get_contacts_paginated(lim INT, off INT)
+
+--  Поиск
+CREATE OR REPLACE FUNCTION search_contacts(txt TEXT)
 RETURNS TABLE(id INT, first_name VARCHAR, phone VARCHAR) AS $$
 BEGIN
     RETURN QUERY
-    SELECT pb.id, pb.first_name, pb.phone
-    FROM phonebook pb
-    ORDER BY pb.id
-    LIMIT lim OFFSET off;
+    SELECT id, first_name, phone FROM phonebook
+    WHERE first_name ILIKE '%' || txt || '%'
+       OR phone LIKE '%' || txt || '%';
+END;
+$$ LANGUAGE plpgsql;
+
+
+--  COUNT
+CREATE OR REPLACE FUNCTION count_contacts()
+RETURNS INT AS $$
+DECLARE total INT;
+BEGIN
+    SELECT COUNT(*) INTO total FROM phonebook;
+    RETURN total;
 END;
 $$ LANGUAGE plpgsql;
